@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lei.mapper.AuthorityMapper" >
+  <resultMap id="BaseResultMap" type="com.lei.entity.AuthorityEntity" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="authority_code" property="authorityCode" jdbcType="VARCHAR" />
+    <result column="authority_name" property="authorityName" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from authority
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.lei.entity.AuthorityEntity" >
+    insert into authority (id, authority_code, authority_name
+      )
+    values (#{id,jdbcType=BIGINT}, #{authorityCode,jdbcType=VARCHAR}, #{authorityName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.lei.entity.AuthorityEntity" >
+    update authority
+    set authority_code = #{authorityCode,jdbcType=VARCHAR},
+      authority_name = #{authorityName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, authority_code, authority_name
+    from authority
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, authority_code, authority_name
+    from authority
+  </select>
+
+  <!--根据uid查询有的权限-->
+  <select id="selectAllAuthByUid" resultMap="BaseResultMap">
+      select a.id,a.authority_code,a.authority_name from `authority` as a LEFT JOIN
+      `role_auth_rel` as ra on a.id = ra.authority_id  LEFT JOIN
+      `user` u on ra.role_id = u.role_id where u.id = #{uId}
+  </select>
+
+  <!--根据角色Code查询该角色对应的所有的权限-->
+  <select id="selectAllAuthByRoleCode" resultMap="BaseResultMap">
+    select * from `authority` as a LEFT JOIN `role_auth_rel` as ra on a.id = ra.authority_id
+    LEFT JOIN `role` as r on ra.role_id = r.id where r.role_code = #{roleCode}
+  </select>
+</mapper>
